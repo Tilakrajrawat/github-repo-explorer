@@ -1,13 +1,41 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import SearchBar from "./components/SearchBar";
 import UserCard from "./components/UserCard";
 import RepoList from "./components/RepoList";
 import { searchUser } from "./services/githubApi";
+import SortDropdown from "./components/SortDropdown";
 
 function App() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [sortBy, setSortBy] = useState("stars");
+
+  const sortedRepos = useMemo(() => {
+    if (!data?.repos) return [];
+  
+    const repos = [...data.repos];
+  
+    switch (sortBy) {
+      case "name":
+        return repos.sort((a, b) =>
+          a.name.localeCompare(b.name)
+        );
+  
+      case "updated":
+        return repos.sort(
+          (a, b) =>
+            new Date(b.updatedAt) -
+            new Date(a.updatedAt)
+        );
+  
+      case "stars":
+      default:
+        return repos.sort(
+          (a, b) => b.stars - a.stars
+        );
+    }
+  }, [data, sortBy]);
 
   const handleSearch = async (username) => {
     try {
@@ -43,7 +71,14 @@ function App() {
       {data && (
         <>
           <UserCard user={data.user} />
-          <RepoList repos={data.repos} />
+          <>
+  <SortDropdown
+    sortBy={sortBy}
+    onSortChange={setSortBy}
+  />
+
+  <RepoList repos={sortedRepos} />
+</>
         </>
       )}
     </div>
