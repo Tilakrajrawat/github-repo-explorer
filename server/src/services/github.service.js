@@ -1,6 +1,18 @@
 const axios = require("axios");
+const cache = require("../cache/memoryCache");
 
 const getGitHubUserData = async (username) => {
+
+  const cachedData = cache.get(username);
+
+  if (
+    cachedData &&
+    cachedData.expiry > Date.now()
+  ) {
+    console.log("Cache Hit");
+    return cachedData.data;
+  }
+
   const [userResponse, reposResponse] = await Promise.all([
     axios.get(`https://api.github.com/users/${username}`),
     axios.get(`https://api.github.com/users/${username}/repos`)
@@ -8,7 +20,7 @@ const getGitHubUserData = async (username) => {
 
   const user = userResponse.data;
 
-  return {
+  const responseData = {
     user: {
       avatarUrl: user.avatar_url,
       name: user.name,
@@ -31,6 +43,13 @@ const getGitHubUserData = async (username) => {
       repoUrl: repo.html_url
     }))
   };
+
+  cache.set(username, {
+    data: responseData,
+    expiry: Date.now() + 60000
+  });
+
+  return responseData;
 };
 
 module.exports = {
