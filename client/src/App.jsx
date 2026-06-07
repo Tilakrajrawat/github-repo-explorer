@@ -1,17 +1,32 @@
 import { useState } from "react";
 import SearchBar from "./components/SearchBar";
 import UserCard from "./components/UserCard";
+import RepoList from "./components/RepoList";
 import { searchUser } from "./services/githubApi";
 
 function App() {
   const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSearch = async (username) => {
     try {
+      setLoading(true);
+      setError("");
+
       const result = await searchUser(username);
+
       setData(result);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      if (err.response?.status === 404) {
+        setError("GitHub user not found");
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+
+      setData(null);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -21,7 +36,16 @@ function App() {
 
       <SearchBar onSearch={handleSearch} />
 
-      {data && <UserCard user={data.user} />}
+      {loading && <p>Loading...</p>}
+
+      {error && <p>{error}</p>}
+
+      {data && (
+        <>
+          <UserCard user={data.user} />
+          <RepoList repos={data.repos} />
+        </>
+      )}
     </div>
   );
 }
