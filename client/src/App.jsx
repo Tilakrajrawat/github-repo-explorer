@@ -1,5 +1,6 @@
 import { useState } from "react";
 import SearchBar from "./components/SearchBar";
+import UserCard from "./components/UserCard";
 import { searchUser } from "./services/githubApi";
 
 function App() {
@@ -8,9 +9,6 @@ function App() {
   const handleSearch = async (username) => {
     try {
       const result = await searchUser(username);
-
-      console.log(result);
-
       setData(result);
     } catch (error) {
       console.error(error);
@@ -23,11 +21,7 @@ function App() {
 
       <SearchBar onSearch={handleSearch} />
 
-      {data && (
-        <pre>
-          {JSON.stringify(data, null, 2)}
-        </pre>
-      )}
+      {data && <UserCard user={data.user} />}
     </div>
   );
 }
