@@ -2,7 +2,7 @@ import { useState } from "react";
 
 function SearchBar({ onSearch }) {
   const [username, setUsername] = useState("");
-  
+
   const handleSubmit = (e) => {
     e.preventDefault();
   
@@ -14,7 +14,7 @@ function SearchBar({ onSearch }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="search-form"onSubmit={handleSubmit}>
       <input
         type="text"
         placeholder="Enter GitHub username"
