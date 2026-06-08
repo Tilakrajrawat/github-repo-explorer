@@ -1,6 +1,6 @@
 function SortDropdown({ sortBy, onSortChange }) {
     return (
-      <div>
+      <div className="sort-container">
         <label>Sort By: </label>
   
         <select

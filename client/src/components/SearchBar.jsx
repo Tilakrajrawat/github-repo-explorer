@@ -2,13 +2,15 @@ import { useState } from "react";
 
 function SearchBar({ onSearch }) {
   const [username, setUsername] = useState("");
-
+  
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (!username.trim()) return;
-
-    onSearch(username);
+  
+    const trimmedUsername = username.trim();
+  
+    if (!trimmedUsername) return;
+  
+    onSearch(trimmedUsername);
   };
 
   return (

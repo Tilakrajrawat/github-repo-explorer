@@ -1,3 +1,5 @@
+import "./App.css";
+
 import { useMemo, useState } from "react";
 import SearchBar from "./components/SearchBar";
 import UserCard from "./components/UserCard";
@@ -81,16 +83,16 @@ function App() {
   
 
   return (
-    <div>
+    <div className="app">
       <h1>GitHub Repo Explorer</h1>
 
       <SearchBar onSearch={handleSearch} />
       {recentSearches.length > 0 && (
-  <div>
+  <div className="recent-searches">
     <h3>Recent Searches</h3>
 
     {recentSearches.map((search) => (
-      <button
+      <button 
         key={search}
         onClick={() => handleSearch(search)}
       >
@@ -100,22 +102,21 @@ function App() {
   </div>
 )}
 
-      {loading && <p>Loading...</p>}
+      {loading && <p className="loading">Loading...</p>}
 
       {error && <p>{error}</p>}
 
       {data && (
-        <>
-          <UserCard user={data.user} />
-          <>
-  <SortDropdown
-    sortBy={sortBy}
-    onSortChange={setSortBy}
-  />
-
-  <RepoList repos={sortedRepos} />
-</>
-        </>
+        <><>
+        <UserCard user={data.user} />
+      
+        <SortDropdown
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+        />
+      
+        <RepoList repos={sortedRepos} />
+      </></>
       )}
     </div>
   );

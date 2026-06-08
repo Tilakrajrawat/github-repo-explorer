@@ -11,7 +11,7 @@ function UserCard({ user }) {
   
         <p>{user.bio}</p>
   
-        <div>
+        <div className="user-info">
           <p>Followers: {user.followers}</p>
           <p>Following: {user.following}</p>
           <p>Repositories: {user.publicRepos}</p>
