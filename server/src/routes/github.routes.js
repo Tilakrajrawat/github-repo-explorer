@@ -16,16 +16,22 @@ router.get("/:username", async (req, res) => {
 
   } catch (error) {
 
-    if (err.response?.status === 404) {
-      setError("GitHub user not found");
-    } else if (err.response?.status === 403) {
-      setError(
-        "GitHub API rate limit exceeded. Try again later."
-      );
-    } else {
-      setError("Something went wrong. Please try again.");
-    }}
+    if (error.response?.status === 404) {
+      return res.status(404).json({
+        message: "GitHub user not found"
+      });
+    }
 
+    if (error.response?.status === 403) {
+      return res.status(403).json({
+        message: "GitHub API rate limit exceeded"
+      });
+    }
+
+    return res.status(500).json({
+      message: "Something went wrong"
+    });
+  }
 });
 
 module.exports = router;
