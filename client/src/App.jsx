@@ -10,7 +10,13 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [sortBy, setSortBy] = useState("stars");
+  const [recentSearches, setRecentSearches] = useState(() => {
+    return JSON.parse(
+      localStorage.getItem("recentSearches")
+    ) || [];
+  });
 
+  
   const sortedRepos = useMemo(() => {
     if (!data?.repos) return [];
   
@@ -41,28 +47,58 @@ function App() {
     try {
       setLoading(true);
       setError("");
-
+  
       const result = await searchUser(username);
-
+  
       setData(result);
+  
+      const updatedSearches = [
+        username,
+        ...recentSearches.filter(
+          item => item !== username
+        )
+      ].slice(0, 5);
+  
+      setRecentSearches(updatedSearches);
+  
+      localStorage.setItem(
+        "recentSearches",
+        JSON.stringify(updatedSearches)
+      );
+  
     } catch (err) {
       if (err.response?.status === 404) {
         setError("GitHub user not found");
       } else {
         setError("Something went wrong. Please try again.");
       }
-
+  
       setData(null);
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <div>
       <h1>GitHub Repo Explorer</h1>
 
       <SearchBar onSearch={handleSearch} />
+      {recentSearches.length > 0 && (
+  <div>
+    <h3>Recent Searches</h3>
+
+    {recentSearches.map((search) => (
+      <button
+        key={search}
+        onClick={() => handleSearch(search)}
+      >
+        {search}
+      </button>
+    ))}
+  </div>
+)}
 
       {loading && <p>Loading...</p>}
 
